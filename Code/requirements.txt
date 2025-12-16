@@ -3,5 +3,5 @@
 # requests
 # flask
 Pillow
-# pymodm
-# dnspython
+opencv-python
+pyserial

@@ -28,7 +28,7 @@ spi.open(0, 0)
 spi.max_speed_hz = spi_max_speed
 
 
-def export_data(file):
+def export_data(file, save_path):
     save_path = "sarahsheng@10.193.47.130:/Users/sarahsheng/Desktop/SFDI_spiral_handheld/code/code_scripts"
     data_path = f"/home/roblyer-admin/Downloads/Python/code_scripts/{file}"
     subprocess.run([
