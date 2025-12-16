@@ -1,7 +1,3 @@
-# 4/6/25 modified to include LED
-# 12/6/25 modified to transfer data (Sarah)
-
-##### VARIABLES TO EDIT AS DESIRED #####
 import auto_AcquireSingle_sarah
 import os
 import elliptec_rotation_stage
@@ -13,9 +9,6 @@ import RPi.GPIO as GPIO
 
 # DAC value [0,4095] corresponding to input voltage to BuckPuck driver
 DAC = 3000
-t_rot = 2.5  # time delay for rotation stage movement
-t_cam = 2.5  # time delay for camera acquisition
-
 DEBUG = False
 spi_max_speed = 4 * 1000000  # 4 MHz
 V_Ref = 5000  # 5.0V in mV
@@ -26,9 +19,10 @@ spi = spidev.SpiDev()
 # spi.open(0,CE)
 spi.open(0, 0)
 spi.max_speed_hz = spi_max_speed
+camera_mode = "auto"
 
 
-def export_data(file, save_path):
+def export_data(file):
     save_path = "sarahsheng@10.193.47.130:/Users/sarahsheng/Desktop/SFDI_spiral_handheld/code/code_scripts"
     data_path = f"/home/roblyer-admin/Downloads/Python/code_scripts/{file}"
     subprocess.run([
@@ -59,42 +53,39 @@ def setOutput(val):
 
 
 # turn LED on to desired voltage
-time.sleep(1)
-print("turning LED on")
-time.sleep(1)
-
+print("turning LED on\n")
 setOutput(DAC)
-
-mount = elliptec_rotation_stage.ElliptecRotationStage(
-    '/dev/ttyUSB0', offset=0)  # changed from /dev/ttyUSB0
+time.sleep(1)
 
 print('homing motor\n')
+mount = elliptec_rotation_stage.ElliptecRotationStage(
+    '/dev/ttyUSB0', offset=0)  # changed from /dev/ttyUSB0
 mount.home()
-time.sleep(t_rot)
+time.sleep(1)
 print('homing complete')
-_, filename1 = auto_AcquireSingle_sarah.main("manual")
-time.sleep(t_cam)
-# print('image 1 captured')
 
+_, filename1 = auto_AcquireSingle_sarah.main(camera_mode)
+time.sleep(1)
 
 mount.move_by(120)
-time.sleep(t_rot)
+time.sleep(1)
 print('rotated 120 degrees CCW')
-_, filename2 = auto_AcquireSingle_sarah.main("manual")
-time.sleep(t_cam)
-# print('image 2 captured')
+_, filename2 = auto_AcquireSingle_sarah.main(camera_mode)
+time.sleep(1)
 
 mount.move_by(120)
-time.sleep(t_rot)
+time.sleep(1)
 print('rotated 120 degrees CCW')
-_, filename3 = auto_AcquireSingle_sarah.main("manual")
-time.sleep(t_cam)
-# print('image 3 captured')
+_, filename3 = auto_AcquireSingle_sarah.main(camera_mode)
+time.sleep(1)
+
 
 mount.move_by(120)
-time.sleep(t_rot)
+time.sleep(1)
 print('rotated 120 degrees CCW')
 time.sleep(1)
+
+
 print('\nturning LED off')
 time.sleep(1)
 setOutput(4095)
